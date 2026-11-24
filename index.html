@@ -1593,7 +1593,10 @@ function demoBackend() {
   };
 }
 
-const API = (CFG.FIREBASE && CFG.FIREBASE.projectId && window.firebase) ? firebaseBackend() : demoBackend();
+// Why the site is in demo mode (shown in the yellow banner so setup problems are easy to find)
+const DEMO_WHY = !window.UPGRADE_CONFIG ? 'noconfig' : !(CFG.FIREBASE && CFG.FIREBASE.projectId) ? 'empty' : !window.firebase ? 'sdk' : '';
+let API;
+try { API = DEMO_WHY ? demoBackend() : firebaseBackend(); } catch (e) { console.warn(e); window.DEMO_ERR = String(e && e.message || e); API = demoBackend(); }
 
 /* ===== UPgrade site app ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1779,10 +1782,21 @@ function render() {
     <div class="lang"><button class="${LANG === 'uz' ? 'on' : ''}" data-lang="uz">UZ</button><button class="${LANG === 'en' ? 'on' : ''}" data-lang="en">EN</button></div>`;
   $('#tabbar').innerHTML = nav.map(([r, k]) => `<a href="#${r}" class="${ROUTE === r ? 'on' : ''}">${ICONS[r]}<span>${t(k)}</span></a>`).join('');
   const pages = { home: pageHome, events: pageEvents, tickets: pageTickets, top: pageTop, admin: pageAdmin };
-  $('#main').innerHTML = (API.mode === 'demo' ? `<div class="demo">${t('demoNote')}</div>` : '') + (pages[ROUTE] || pageHome)();
+  $('#main').innerHTML = (API.mode === 'demo' ? `<div class="demo">${t('demoNote')}${demoWhy()}</div>` : '') + (pages[ROUTE] || pageHome)();
   $('#ftr').innerHTML = `<div>${wordmark()} <span>${t('footer')}</span></div><button class="linkbtn" data-act="${IS_ADMIN ? 'admin' : 'login'}">⚙ ${IS_ADMIN ? t('admin') : t('iamAdmin')}</button>`;
   if (ROUTE === 'top') autoPoints();
   if (ROUTE === 'admin' && IS_ADMIN) OPEN_REGS.forEach(id => showRegs(id, true));
+}
+function demoWhy() {
+  const why = window.DEMO_ERR ? 'init' : DEMO_WHY;
+  const msg = {
+    noconfig: ['config.js topilmadi yoki ichida yozuv xatosi bor (vergul, qavs). Fayl nomi aynan config.js bo‘lib, index.html bilan bir papkada tursin.', 'config.js was not found or has a typo (comma, bracket). It must be named exactly config.js and sit next to index.html.'],
+    empty: ['config.js topildi, lekin FIREBASE ichida projectId yo‘q: kalitlar hali qo‘yilmagan yoki // bilan o‘chirilgan.', 'config.js was found, but FIREBASE has no projectId: the keys are missing or still commented out with //.'],
+    sdk: ['Kalitlar bor, lekin Firebase kutubxonasi yuklanmadi (internet yoki brauzer to‘sib qo‘ygan). Sahifani yangilab ko‘ring.', 'Keys are set, but the Firebase library did not load (network or browser blocked it). Try reloading.'],
+    init: ['Firebase ishga tushmadi: ', 'Firebase failed to start: ']
+  }[why];
+  if (!msg) return '';
+  return `<br><b>${LANG === 'en' ? 'Reason' : 'Sabab'}:</b> ${esc(msg[LANG === 'en' ? 1 : 0])}${why === 'init' ? esc(window.DEMO_ERR) : ''}`;
 }
 const ICONS = {
   home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
