@@ -10,12 +10,12 @@
 
 window.UPGRADE_CONFIG = {
   FIREBASE: {
-    // apiKey: "....",
-    // authDomain: "....firebaseapp.com",
-    // projectId: "....",
-    // storageBucket: "....appspot.com",
-    // messagingSenderId: "....",
-    // appId: "...."
+    apiKey: "AIzaSyBqV7cAAA-NKVnZ_DRONETI-uKxhAlhMd4",
+    authDomain: "upgrade-udea.firebaseapp.com",
+    projectId: "upgrade-udea",
+    storageBucket: "upgrade-udea.firebasestorage.app",
+    messagingSenderId: "921558198476",
+    appId: "1:921558198476:web:ab2e0bf663590f4b96ba69"
   },
   ADMIN_EMAIL: "admin@upgrade-udea.uz",   // firestore.rules dagi bilan bir xil bo'lsin
   POINTS_DEFAULT: 40        // har bir tashrif uchun standart ball
