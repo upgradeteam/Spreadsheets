@@ -6,6 +6,7 @@
 <title>UPgrade Council · UDEA</title>
 <meta name="description" content="UPgrade Council: UDEA talabalari uchun tadbirlar, ro'yxatdan o'tish, QR chipta va ballar reytingi.">
 <meta name="theme-color" content="#0B1033">
+<script>try{var th=JSON.parse(localStorage.getItem("upg-theme")||"\"auto\"");if(th==="light"||th==="dark")document.documentElement.setAttribute("data-theme",th);}catch(e){}</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231F4FD8'/%3E%3Ctext x='32' y='43' font-family='Arial Black,Arial' font-weight='900' font-size='30' text-anchor='middle' fill='%23fff'%3EUP%3C/text%3E%3Crect x='14' y='50' width='36' height='5' rx='2.5' fill='%23F04D24'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112..125,600..900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -16,11 +17,16 @@
   --ground:#F2F4FA; --card:#FFFFFF; --ink:#0B1033; --muted:#545C7A; --line:#DCE1EE; --soft:#E8ECF8;
   --ok:#14804A; --okbg:#E3F5EB; --bad:#C2311B; --badbg:#FDECE8;
   --f-display:"Archivo","Arial Black",Arial,sans-serif; --f-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --demo-bg:#FFF4D6; --demo-ink:#5A4300; --demo-line:#F0D48A;
   --r:18px; color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root{
+/* theme: follows the phone/computer setting, or the choice saved in Profile → Settings (data-theme) */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ground:#0A0E26; --card:#141A3A; --ink:#EEF1FB; --muted:#A6AECB; --line:#2A3260; --soft:#1C2350;
-  --ok:#5BD08F; --okbg:#123A27; --bad:#FF8A73; --badbg:#3E1A14; --blue:#6E8BFF; color-scheme:dark}}
+  --ok:#5BD08F; --okbg:#123A27; --bad:#FF8A73; --badbg:#3E1A14; --blue:#6E8BFF; --demo-bg:#3A3010; --demo-ink:#F5DE9B; --demo-line:#6B5A1E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#0A0E26; --card:#141A3A; --ink:#EEF1FB; --muted:#A6AECB; --line:#2A3260; --soft:#1C2350;
+  --ok:#5BD08F; --okbg:#123A27; --bad:#FF8A73; --badbg:#3E1A14; --blue:#6E8BFF; --demo-bg:#3A3010; --demo-ink:#F5DE9B; --demo-line:#6B5A1E; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--ground);color:var(--ink);font:16px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -53,8 +59,7 @@ h1.pg{font-size:clamp(28px,5vw,40px);font-weight:900}
 .kick{font:700 12px/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:#9FB0FF}
 .kick.o{color:var(--orange)}
 .empty{color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:var(--r);padding:18px;margin:0}
-.demo{background:#FFF4D6;color:#5A4300;border:1px solid #F0D48A;border-radius:12px;padding:10px 14px;font-size:14px}
-@media (prefers-color-scheme:dark){.demo{background:#3A3010;color:#F5DE9B;border-color:#6B5A1E}}
+.demo{background:var(--demo-bg);color:var(--demo-ink);border:1px solid var(--demo-line);border-radius:12px;padding:10px 14px;font-size:14px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row.c{justify-content:center}
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:999px;border:1.5px solid transparent;font:700 15px var(--f-body);text-decoration:none;cursor:pointer;transition:transform .15s,background .15s}
@@ -175,6 +180,27 @@ input:focus,textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 
 /* footer */
 #ftr{max-width:1080px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 30px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
 #ftr .wm{font-size:16px;margin-right:6px}#ftr .wm-gr{color:var(--blue)}
+/* profile */
+.seg{display:inline-flex;background:var(--soft);border-radius:999px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--muted);font:700 14px var(--f-body);padding:8px 16px;min-height:40px;border-radius:999px;cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(11,16,51,.15)}
+.phead{display:flex;flex-direction:row;align-items:center;text-align:left;gap:18px;flex-wrap:wrap;background:var(--navy);color:#fff;border-radius:var(--r);padding:22px clamp(16px,3vw,28px);position:relative;overflow:hidden}
+.phead::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(240,77,36,.45),transparent 70%)}
+.avatar{width:72px;height:72px;flex:none;border-radius:50%;display:grid;place-items:center;font:900 26px var(--f-display);font-stretch:125%;background:linear-gradient(135deg,var(--orange),#5B7BFF);color:#fff;position:relative;z-index:1}
+.pinfo{flex:1;min-width:180px;position:relative;z-index:1;display:flex;flex-direction:column;gap:4px}
+.pinfo h1{font-size:clamp(24px,4vw,32px);font-weight:900}
+.pinfo span{color:#C9D2F5;font:500 14px var(--f-mono)}
+.pinfo p{margin:6px 0 0;color:#E3E8FA;font-size:15px;max-width:60ch;white-space:pre-line}
+.pstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pstats div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.pstats b{font:900 28px/1 var(--f-display);font-stretch:118%;font-variant-numeric:tabular-nums}
+.pstats div:first-child b{color:var(--orange)}
+.pstats span{font-size:13px;color:var(--muted)}
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--line)}
+.setrow:first-of-type{border-top:0}
+.setrow > div:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.setrow small{color:var(--muted);font-size:13px}
+.msg.ok{color:var(--ok)}
 /* phone */
 @media (max-width:760px){
   .nav{display:none}.lang{margin-left:auto}
@@ -193,14 +219,26 @@ input:focus,textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 
 </head>
 <body>
 <header id="hdr"></header>
-<main id="main"></main>
+<main id="main"><p class="empty" style="margin-top:24px">Yuklanmoqda… · Loading…</p></main>
 <footer id="ftr"></footer>
 <nav id="tabbar" aria-label="Menu"></nav>
 <script src="config.js"></script>
 <script>
-(function(){var c=window.UPGRADE_CONFIG;if(c&&c.FIREBASE&&c.FIREBASE.projectId){var v='10.12.2',b='https://www.gstatic.com/firebasejs/'+v+'/';document.write('<script src="'+b+'firebase-app-compat.js"><\/script><script src="'+b+'firebase-auth-compat.js"><\/script><script src="'+b+'firebase-firestore-compat.js"><\/script>');}})();
+/* Load the Firebase library only when config.js has keys (dynamic loading also works on slow mobile networks) */
+window.__fbReady = new Promise(function (done) {
+  var c = window.UPGRADE_CONFIG;
+  if (!(c && c.FIREBASE && c.FIREBASE.projectId)) return done();
+  var b = 'https://www.gstatic.com/firebasejs/10.12.2/', list = ['firebase-app-compat.js', 'firebase-auth-compat.js', 'firebase-firestore-compat.js'], i = 0;
+  var timer = setTimeout(done, 15000);
+  (function next() {
+    if (i >= list.length) { clearTimeout(timer); return done(); }
+    var s = document.createElement('script'); s.src = b + list[i++]; s.onload = next; s.onerror = function () { clearTimeout(timer); done(); };
+    document.head.appendChild(s);
+  })();
+});
 </script>
 <script>
+window.__fbReady.then(function () {
 /* QR code generator: QRCode for JavaScript, (c) 2009 Kazuhiko Arase, MIT license (via qrcode-terminal). Bundled for the browser. */
 const QRLIB = (() => {
   const M = {}, C = {};
@@ -1475,10 +1513,27 @@ const PTS_DEFAULT = CFG.POINTS_DEFAULT || 40;
 
 function normPhone(s) { const d = String(s || '').replace(/\D/g, ''); return d.length >= 9 ? d.slice(-9) : ''; }
 function fmtPhone(d9) { return d9 ? `+998 ${d9.slice(0, 2)} ${d9.slice(2, 5)} ${d9.slice(5, 7)} ${d9.slice(7)}` : ''; }
+const ACC_DOMAIN = '@upgrade-udea.uz'; // a student's login is their phone number; Firebase stores it as <9 digits>@upgrade-udea.uz
+function cleanProfile(f) {
+  const tg = String(f.telegram || '').trim().replace(/^https?:\/\/t\.me\//i, '').replace(/^@/, '');
+  return { first: String(f.first || '').trim().replace(/\s+/g, ' ').slice(0, 40), last: String(f.last || '').trim().replace(/\s+/g, ' ').slice(0, 40),
+    group: String(f.group || '').trim().toUpperCase().slice(0, 20), telegram: tg ? '@' + tg.slice(0, 39) : '', bio: String(f.bio || '').trim().slice(0, 300) };
+}
+const fullName = p => (p.first + ' ' + p.last).trim();
 async function personIdOf(phone) {
   const d9 = normPhone(phone); const data = new TextEncoder().encode('upgrade:' + d9);
   const h = await crypto.subtle.digest('SHA-256', data);
   return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+}
+
+function authErr(e) {
+  const c = String(e && e.code || '');
+  if (c.includes('email-already-in-use')) return 'exists';
+  if (c.includes('weak-password')) return 'weak';
+  if (/wrong-password|user-not-found|invalid-credential|invalid-login-credentials|invalid-email/.test(c)) return 'wrong';
+  if (c.includes('too-many-requests')) return 'many';
+  if (c.includes('network')) return 'net';
+  console.warn(e); return 'net';
 }
 
 /* ---------- Firebase ---------- */
@@ -1509,12 +1564,46 @@ function firebaseBackend() {
         return { status: 'ok', reg: Object.assign({ id: regId }, r) };
       });
     },
-    onAuth(cb) { auth.onAuthStateChanged(u => cb(!!u && String(u.email || '').toLowerCase() === ADMIN)); },
+    onAuth(cb) {
+      auth.onAuthStateChanged(u => {
+        const em = String(u && u.email || '').toLowerCase();
+        cb({ admin: !!u && em === ADMIN, user: u && /^\d{9}@/.test(em) && em.endsWith(ACC_DOMAIN) ? { uid: u.uid, phone: em.slice(0, 9) } : null });
+      });
+    },
     async adminLogin(code) {
       if (!ADMIN) return false;
       try { await auth.signInWithEmailAndPassword(ADMIN, code); return true; } catch (e) { return false; }
     },
     adminLogout() { return auth.signOut(); },
+    signOut() { return auth.signOut(); },
+    async signUp(f) {
+      const phone = normPhone(f.phone);
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(phone + ACC_DOMAIN, f.password);
+        await this.saveProfile(cred.user.uid, phone, f);
+        return { ok: true };
+      } catch (e) { return { error: authErr(e) }; }
+    },
+    async signIn(phone, pw) {
+      try { await auth.signInWithEmailAndPassword(normPhone(phone) + ACC_DOMAIN, pw); return { ok: true }; } catch (e) { return { error: authErr(e) }; }
+    },
+    async getProfile(uid) {
+      const d = await db.doc('users/' + uid).get(); if (!d.exists) return null;
+      const u = d.data(); const p = await db.doc('people/' + u.personId).get();
+      return Object.assign({}, u, { points: p.exists ? p.data().points || 0 : 0, visits: p.exists ? p.data().visits || 0 : 0 });
+    },
+    async saveProfile(uid, phone, f) {
+      const c = cleanProfile(f), personId = await personIdOf(phone);
+      await db.doc('users/' + uid).set(Object.assign({ personId, phone: normPhone(phone) }, c, { updatedAt: Date.now() }));
+      const pRef = db.doc('people/' + personId), p = await pRef.get();
+      if (!p.exists) await pRef.set({ name: fullName(c), group: c.group, points: 0, visits: 0 });
+      else await pRef.update({ name: fullName(c), group: c.group });
+    },
+    async changePassword(cur, next) {
+      const u = auth.currentUser; if (!u) return { error: 'wrong' };
+      try { await u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email, cur)); await u.updatePassword(next); return { ok: true }; }
+      catch (e) { return { error: authErr(e) }; }
+    },
     async saveEvent(ev, id) {
       if (id) { const { taken, ...rest } = ev; return db.doc('events/' + id).update(rest); }
       return db.collection('events').add(Object.assign({}, ev, { taken: 0, createdAt: Date.now() }));
@@ -1542,6 +1631,11 @@ function firebaseBackend() {
 /* ---------- Demo (localStorage) ---------- */
 function demoBackend() {
   const KEY = 'upg-demo-v1', subs = { ev: [], top: [] }; let admin = false; const authSubs = [];
+  const LSdemo = v => { try { v ? localStorage.setItem('upg-demo-session', v) : localStorage.removeItem('upg-demo-session'); } catch (e) {} };
+  let session = null; try { session = localStorage.getItem('upg-demo-session'); } catch (e) {}
+  const pwHash = async pw => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('demo-pw:' + pw)))].map(b => b.toString(16).padStart(2, '0')).join('');
+  const state = () => ({ admin, user: session && S.users && S.users[session] ? { uid: session, phone: S.users[session].phone } : null });
+  const emit = () => authSubs.forEach(f => f(state()));
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
   let S = load();
   if (!S) {
@@ -1573,9 +1667,36 @@ function demoBackend() {
       if (!S.people[personId]) S.people[personId] = { name: f.name, group: f.group, points: 0, visits: 0 };
       save(); return later({ status: 'ok', reg: Object.assign({ id: regId }, r) });
     },
-    onAuth(cb) { authSubs.push(cb); cb(admin); },
-    async adminLogin(code) { admin = code === '1234'; authSubs.forEach(f => f(admin)); return later(admin); },
-    adminLogout() { admin = false; authSubs.forEach(f => f(false)); return later(); },
+    onAuth(cb) { authSubs.push(cb); cb(state()); },
+    async adminLogin(code) { admin = code === '1234'; if (admin) session = null; emit(); return later(admin); },
+    adminLogout() { admin = false; emit(); return later(); },
+    signOut() { admin = false; session = null; LSdemo(null); emit(); return later(); },
+    async signUp(f) {
+      const phone = normPhone(f.phone); S.users = S.users || {};
+      if (Object.values(S.users).some(u => u.phone === phone)) return later({ error: 'exists' });
+      if (String(f.password).length < 6) return later({ error: 'weak' });
+      const uid = 'u' + Date.now().toString(36); S.users[uid] = { phone, pw: await pwHash(f.password) };
+      await this.saveProfile(uid, phone, f); session = uid; admin = false; LSdemo(uid); emit(); return later({ ok: true });
+    },
+    async signIn(phone, pw) {
+      const d = normPhone(phone), h = await pwHash(pw), e = Object.entries(S.users || {}).find(([, u]) => u.phone === d && u.pw === h);
+      if (!e) return later({ error: 'wrong' }); session = e[0]; admin = false; LSdemo(session); emit(); return later({ ok: true });
+    },
+    async getProfile(uid) {
+      const u = (S.users || {})[uid]; if (!u || !u.profile) return later(null); const p = S.people[u.profile.personId] || {};
+      return later(Object.assign({}, u.profile, { points: p.points || 0, visits: p.visits || 0 }));
+    },
+    async saveProfile(uid, phone, f) {
+      const c = cleanProfile(f), personId = await personIdOf(phone);
+      S.users[uid].profile = Object.assign({ personId, phone: normPhone(phone) }, c, { updatedAt: Date.now() });
+      if (!S.people[personId]) S.people[personId] = { name: fullName(c), group: c.group, points: 0, visits: 0 };
+      else Object.assign(S.people[personId], { name: fullName(c), group: c.group });
+      save(); return later();
+    },
+    async changePassword(cur, next) {
+      const u = (S.users || {})[session]; if (!u || u.pw !== await pwHash(cur)) return later({ error: 'wrong' });
+      if (String(next).length < 6) return later({ error: 'weak' }); u.pw = await pwHash(next); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} return later({ ok: true });
+    },
     async saveEvent(ev, id) {
       if (id) { const { taken, ...rest } = ev; Object.assign(S.events[id], rest); }
       else S.events['e' + Date.now().toString(36)] = Object.assign({}, ev, { taken: 0, createdAt: Date.now() });
@@ -1656,13 +1777,30 @@ const T = {
   okIn: ['ball qo‘shildi', 'points added'], total: ['Jami', 'Total'], alreadyIn: ['Bu chiptaga ball allaqachon berilgan.', 'Points were already given for this ticket.'],
   notFound: ['Chipta topilmadi.', 'Ticket not found.'], badQR: ['Bu UPgrade chiptasi emas.', 'This is not an UPgrade ticket.'], next: ['Keyingisi', 'Next'],
   adminOnly: ['Bu bo‘lim faqat adminlar uchun.', 'This section is for admins only.'],
-  footer: ['UPgrade Council tomonidan UDEA talabalari uchun yaratildi.', 'Made by UPgrade Council for UDEA students.']
+  footer: ['UPgrade Council tomonidan UDEA talabalari uchun yaratildi.', 'Made by UPgrade Council for UDEA students.'],
+  profile: ['Profil', 'Profile'], signIn: ['Kirish', 'Sign in'], signUp: ['Akkaunt ochish', 'Create account'],
+  authP: ['Akkaunt bilan chiptalaringiz va ballaringiz istalgan telefonda ko‘rinadi, ro‘yxatdan o‘tish formasi esa o‘zi to‘ldiriladi.', 'With an account, your tickets and points show up on any phone and registration forms fill in by themselves.'],
+  fFirst: ['Ism', 'First name'], fLast: ['Familiya', 'Last name'], fPass: ['Parol', 'Password'], fPass2: ['Parolni takrorlang', 'Repeat password'],
+  passHint: ['Kamida 6 ta belgi.', 'At least 6 characters.'], loginHint: ['Telefon raqamingiz login bo‘ladi. Ballaringiz shu raqamga yig‘iladi.', 'Your phone number is your login. Your points are collected on this number.'],
+  forgot: ['Parolni unutsangiz, UPgrade adminlariga yozing: akkauntingizni qayta tiklab berishadi.', 'Forgot your password? Message the UPgrade admins and they will reset your account.'],
+  errFirst: ['Ismingizni yozing.', 'Enter your first name.'], errLast: ['Familiyangizni yozing.', 'Enter your last name.'],
+  errPass: ['Parol kamida 6 ta belgidan iborat bo‘lsin.', 'The password needs at least 6 characters.'], errPass2: ['Parollar bir xil emas.', 'The passwords do not match.'],
+  errExists: ['Bu raqam bilan akkaunt allaqachon bor. “Kirish” bo‘limidan kiring.', 'An account with this number already exists. Use “Sign in”.'],
+  errWrong: ['Telefon raqam yoki parol noto‘g‘ri.', 'Wrong phone number or password.'], errCur: ['Hozirgi parol noto‘g‘ri.', 'The current password is wrong.'], errMany: ['Juda ko‘p urinish bo‘ldi. Bir necha daqiqadan keyin qayta urinib ko‘ring.', 'Too many attempts. Try again in a few minutes.'],
+  myInfo: ['Ma’lumotlarim', 'My details'], fTg: ['Telegram (ixtiyoriy)', 'Telegram (optional)'], fBio: ['O‘zim haqimda (ixtiyoriy)', 'About me (optional)'],
+  bioPh: ['Masalan: qaysi klublarga qiziqasiz, nimalarni yaxshi ko‘rasiz…', 'For example: which clubs you like, what you enjoy…'],
+  infoNote: ['Ism, familiya va guruhingiz reytingda ko‘rinadi. Qolgan ma’lumotlarni faqat siz va adminlar ko‘radi.', 'Your name and group appear on the leaderboard. Only you and the admins see the rest.'],
+  settings: ['Sozlamalar', 'Settings'], theme: ['Ko‘rinish', 'Appearance'], themeP: ['Kunduzgi yoki tungi rejim. “Avto” telefoningiz sozlamasiga ergashadi.', 'Light or dark mode. “Auto” follows your phone’s setting.'],
+  light: ['Kunduzgi', 'Light'], dark: ['Tungi', 'Dark'], auto: ['Avto', 'Auto'], language: ['Til', 'Language'], languageP: ['Sayt tili', 'Site language'],
+  pwH: ['Parolni o‘zgartirish', 'Change password'], pwCur: ['Hozirgi parol', 'Current password'], pwNew: ['Yangi parol', 'New password'], pwOk: ['Parol o‘zgartirildi.', 'Password changed.'],
+  signOut: ['Akkauntdan chiqish', 'Sign out'], adminPanel: ['Admin paneli', 'Admin panel'], profSaved: ['Ma’lumotlar saqlandi.', 'Details saved.'],
+  noProfile: ['Profil ma’lumotlari topilmadi. Quyidagi formani to‘ldirib saqlang.', 'No profile details found. Fill in the form below and save.']
 };
 const t = k => (T[k] ? T[k][LANG === 'en' ? 1 : 0] : k);
 const MONTHS = { uz: ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek'], en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] };
 
 /* ---------- state ---------- */
-let EVENTS = [], TOP = [], IS_ADMIN = false, ROUTE = 'home', ADMIN_OPEN = null;
+let EVENTS = [], TOP = [], IS_ADMIN = false, ROUTE = 'home', ADMIN_OPEN = null, USER = null, PROFILE = null, AUTH_TAB = 'in';
 const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const upcoming = () => EVENTS.filter(e => e.date >= todayISO()).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
 const pastEv = () => EVENTS.filter(e => e.date < todayISO()).sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
@@ -1776,12 +1914,12 @@ function eventForm(e = {}) {
 /* ---------- shell ---------- */
 function render() {
   document.documentElement.lang = LANG;
-  const nav = [['home', 'home'], ['events', 'events'], ['tickets', 'tickets'], ['top', 'top']].concat(IS_ADMIN ? [['admin', 'admin']] : []);
+  const nav = [['home', 'home'], ['events', 'events'], ['tickets', 'tickets'], ['top', 'top'], ['profile', 'profile']].concat(IS_ADMIN ? [['admin', 'admin']] : []);
   $('#hdr').innerHTML = `<a class="logo" href="#home" aria-label="UPgrade">${wordmark()}<small>Council</small></a>
     <nav class="nav">${nav.map(([r, k]) => `<a href="#${r}" class="${ROUTE === r ? 'on' : ''}">${t(k)}</a>`).join('')}</nav>
     <div class="lang"><button class="${LANG === 'uz' ? 'on' : ''}" data-lang="uz">UZ</button><button class="${LANG === 'en' ? 'on' : ''}" data-lang="en">EN</button></div>`;
-  $('#tabbar').innerHTML = nav.map(([r, k]) => `<a href="#${r}" class="${ROUTE === r ? 'on' : ''}">${ICONS[r]}<span>${t(k)}</span></a>`).join('');
-  const pages = { home: pageHome, events: pageEvents, tickets: pageTickets, top: pageTop, admin: pageAdmin };
+  $('#tabbar').innerHTML = nav.filter(([r]) => r !== 'admin').map(([r, k]) => `<a href="#${r}" class="${ROUTE === r ? 'on' : ''}">${ICONS[r]}<span>${t(k)}</span></a>`).join('');
+  const pages = { home: pageHome, events: pageEvents, tickets: pageTickets, top: pageTop, admin: pageAdmin, profile: pageProfile };
   $('#main').innerHTML = (API.mode === 'demo' ? `<div class="demo">${t('demoNote')}${demoWhy()}</div>` : '') + (pages[ROUTE] || pageHome)();
   $('#ftr').innerHTML = `<div>${wordmark()} <span>${t('footer')}</span></div><button class="linkbtn" data-act="${IS_ADMIN ? 'admin' : 'login'}">⚙ ${IS_ADMIN ? t('admin') : t('iamAdmin')}</button>`;
   if (ROUTE === 'top') autoPoints();
@@ -1799,13 +1937,14 @@ function demoWhy() {
   return `<br><b>${LANG === 'en' ? 'Reason' : 'Sabab'}:</b> ${esc(msg[LANG === 'en' ? 1 : 0])}${why === 'init' ? esc(window.DEMO_ERR) : ''}`;
 }
 const ICONS = {
+  profile: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
   home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
   events: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   tickets: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4z"/><path d="M14 5v14" stroke-dasharray="2 2"/></svg>',
   top: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>',
   admin: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
-function route() { if ($('#modal')) closeModal(); const h = (location.hash || '#home').slice(1); ROUTE = ['home', 'events', 'tickets', 'top', 'admin'].includes(h) ? h : 'home'; render(); window.scrollTo(0, 0); }
+function route() { if ($('#modal')) closeModal(); const h = (location.hash || '#home').slice(1); ROUTE = ['home', 'events', 'tickets', 'top', 'admin', 'profile'].includes(h) ? h : 'home'; render(); window.scrollTo(0, 0); }
 
 /* ---------- modal ---------- */
 function modal(html, onClose) {
@@ -1819,7 +1958,7 @@ function closeModal() { const m = $('#modal'); if (m) { if (m._onClose) m._onClo
 /* ---------- registration ---------- */
 function openRegister(id) {
   const e = EVENTS.find(x => x.id === id); if (!e) return;
-  const saved = LS.get('me', {});
+  const saved = PROFILE ? { name: fullName(PROFILE), group: PROFILE.group } : LS.get('me', {});
   modal(`<h2>${t('regH')}</h2><p class="m-sub"><b>${esc(e.title)}</b><br>${esc(e.date)} ${esc(e.time || '')} · ${esc(e.place || '')}</p>
     <form id="regF" class="form" data-id="${esc(id)}">
       <label>${t('fName')}<input id="r-name" required maxlength="60" autocomplete="name" value="${esc(saved.name || '')}"></label>
@@ -1871,6 +2010,95 @@ async function showPoints(phone) {
   } catch (e) { out.innerHTML = `<p class="msg err">${t('errNet')}</p>`; }
 }
 function autoPoints() { const p = LS.get('phone', ''); if (p) showPoints(p); }
+
+async function syncTickets(phone) { // quietly bring this person's tickets onto this device
+  try { const pid = await personIdOf(phone); let n = 0; for (const e of EVENTS) { const r = await API.getReg(e.id + '_' + pid); if (r) { saveTicket(r); n++; } } if (n) softRender(); } catch (e) {}
+}
+
+/* ---------- profile & settings ---------- */
+function applyTheme(th) { if (th === 'light' || th === 'dark') document.documentElement.setAttribute('data-theme', th); else document.documentElement.removeAttribute('data-theme'); }
+function settingsCard() {
+  const th = LS.get('theme', 'auto');
+  return `<section class="card"><h2>${t('settings')}</h2>
+    <div class="setrow"><div><b>${t('theme')}</b><small>${t('themeP')}</small></div>
+      <div class="seg" role="group" aria-label="${t('theme')}">${['light', 'dark', 'auto'].map(k => `<button data-act="theme" data-id="${k}" class="${th === k ? 'on' : ''}" aria-pressed="${th === k}">${t(k)}</button>`).join('')}</div></div>
+    <div class="setrow"><div><b>${t('language')}</b><small>${t('languageP')}</small></div>
+      <div class="seg" role="group" aria-label="${t('language')}"><button data-lang="uz" class="${LANG === 'uz' ? 'on' : ''}">O‘zbekcha</button><button data-lang="en" class="${LANG === 'en' ? 'on' : ''}">English</button></div></div>
+    ${USER ? `<div class="setrow"><div><b>${t('pwH')}</b><small>${t('passHint')}</small></div></div>
+      <form id="pwF" class="form"><div class="two"><label>${t('pwCur')}<input id="pw-cur" type="password" autocomplete="current-password" required></label><label>${t('pwNew')}<input id="pw-new" type="password" autocomplete="new-password" minlength="6" required></label></div>
+      <div class="row"><button class="btn ghost">${t('pwH')}</button><span id="pwMsg" class="msg" role="status"></span></div></form>` : ''}
+    ${IS_ADMIN ? `<div class="setrow"><div><b>${t('adminPanel')}</b></div><a class="btn ghost" href="#admin">${t('adminPanel')} →</a></div>` : ''}
+    ${USER || IS_ADMIN ? `<div class="setrow"><div></div><button class="btn danger" data-act="signout">${t('signOut')}</button></div>` : ''}
+  </section>`;
+}
+function phoneField(id) { return `<label>${t('fPhone')}<span class="inline"><span class="pre">+998</span><input id="${id}" required inputmode="tel" autocomplete="tel" placeholder="90 123 45 67" value="${esc(LS.get('phone', ''))}"></span></label>`; }
+function pageProfile() {
+  if (!USER) {
+    const isIn = AUTH_TAB === 'in';
+    return `<section class="card narrow"><h1 class="pg">${t('profile')}</h1><p>${t('authP')}</p>
+      <div class="seg" role="tablist"><button role="tab" data-act="authtab" data-id="in" class="${isIn ? 'on' : ''}" aria-selected="${isIn}">${t('signIn')}</button><button role="tab" data-act="authtab" data-id="up" class="${isIn ? '' : 'on'}" aria-selected="${!isIn}">${t('signUp')}</button></div>
+      ${isIn ? `<form id="inF" class="form">${phoneField('in-phone')}<label>${t('fPass')}<input id="in-pass" type="password" autocomplete="current-password" required></label>
+          <p id="authMsg" class="msg err" role="alert"></p><div class="row"><button class="btn primary big">${t('signIn')}</button></div><p class="note">${t('forgot')}</p></form>`
+        : `<form id="upF" class="form"><div class="two"><label>${t('fFirst')}<input id="up-first" required maxlength="40" autocomplete="given-name"></label><label>${t('fLast')}<input id="up-last" required maxlength="40" autocomplete="family-name"></label></div>
+          <label>${t('fGroup')}<input id="up-group" required maxlength="20" placeholder="FAF01" value="${esc((LS.get('me', {}).group) || '')}"></label>
+          ${phoneField('up-phone')}<p class="note">${t('loginHint')}</p>
+          <div class="two"><label>${t('fPass')}<input id="up-pass" type="password" autocomplete="new-password" minlength="6" required></label><label>${t('fPass2')}<input id="up-pass2" type="password" autocomplete="new-password" minlength="6" required></label></div>
+          <p class="note">${t('passHint')} ${t('infoNote')}</p>
+          <p id="authMsg" class="msg err" role="alert"></p><div class="row"><button class="btn primary big">${t('signUp')}</button></div></form>`}
+    </section>${settingsCard()}`;
+  }
+  const P = PROFILE || { first: '', last: '', group: '', telegram: '', bio: '', points: 0, visits: 0 };
+  const name = fullName(P) || fmtPhone(USER.phone), ini = (((P.first || '')[0] || '') + ((P.last || '')[0] || '')).toUpperCase();
+  const pid = P.personId, rank = pid && (P.points || 0) > 0 ? TOP.filter(x => (x.points || 0) > 0).findIndex(x => x.id === pid) : -1;
+  const myT = Object.values(tickets()).length;
+  return `<section class="phead"><div class="avatar" aria-hidden="true">${esc(ini || 'UP')}</div>
+      <div class="pinfo"><h1>${esc(name)}</h1><span>${esc([P.group, P.telegram, fmtPhone(USER.phone)].filter(Boolean).join(' · '))}</span>${P.bio ? `<p>${esc(P.bio)}</p>` : ''}</div></section>
+    <div class="pstats"><div><b>${esc(P.points || 0)}</b><span>${t('pts')}</span></div><div><b>${esc(P.visits || 0)}</b><span>${t('visits')}</span></div><div><b>${rank >= 0 ? rank + 1 : '—'}</b><span>${t('rank')} · TOP 10</span></div></div>
+    ${myT ? `<a class="btn ghost" href="#tickets">${t('tickets')} (${myT}) →</a>` : ''}
+    <section class="card"><h2>${t('myInfo')}</h2>${PROFILE ? '' : `<p>${t('noProfile')}</p>`}
+      <form id="profF" class="form"><div class="two"><label>${t('fFirst')}<input id="pf-first" required maxlength="40" value="${esc(P.first)}" autocomplete="given-name"></label><label>${t('fLast')}<input id="pf-last" required maxlength="40" value="${esc(P.last)}" autocomplete="family-name"></label></div>
+        <div class="two"><label>${t('fGroup')}<input id="pf-group" required maxlength="20" value="${esc(P.group)}"></label><label>${t('fTg')}<input id="pf-tg" maxlength="40" placeholder="@username" value="${esc(P.telegram)}"></label></div>
+        <label>${t('fBio')}<textarea id="pf-bio" rows="3" maxlength="300" placeholder="${t('bioPh')}">${esc(P.bio)}</textarea></label>
+        <p class="note">${t('infoNote')}</p><div class="row"><button class="btn primary">${t('save')}</button><span id="profMsg" class="msg" role="status"></span></div></form></section>
+    ${settingsCard()}`;
+}
+async function submitSignIn() {
+  const msg = $('#authMsg'), phone = $('#in-phone').value, pw = $('#in-pass').value;
+  if (!normPhone(phone)) return msg.textContent = t('errPhone');
+  const b = $('#inF .btn.primary'); b.disabled = true;
+  const r = await API.signIn(phone, pw); b.disabled = false;
+  if (r.error) msg.textContent = t({ wrong: 'errWrong', many: 'errMany' }[r.error] || 'errNet');
+}
+async function submitSignUp() {
+  const msg = $('#authMsg'), v = id => $('#up-' + id).value;
+  const f = { first: v('first'), last: v('last'), group: v('group'), phone: v('phone'), password: v('pass') };
+  if (!f.first.trim()) return msg.textContent = t('errFirst');
+  if (!f.last.trim()) return msg.textContent = t('errLast');
+  if (!f.group.trim()) return msg.textContent = t('errGroup');
+  if (!normPhone(f.phone) || String(f.phone).replace(/\D/g, '').length > 12) return msg.textContent = t('errPhone');
+  if (f.password.length < 6) return msg.textContent = t('errPass');
+  if (f.password !== v('pass2')) return msg.textContent = t('errPass2');
+  const b = $('#upF .btn.primary'); b.disabled = true;
+  const r = await API.signUp(f); b.disabled = false;
+  if (r.error) msg.textContent = t({ exists: 'errExists', weak: 'errPass', many: 'errMany' }[r.error] || 'errNet');
+}
+async function submitProfile() {
+  const msg = $('#profMsg'), v = id => $('#pf-' + id).value;
+  const f = { first: v('first'), last: v('last'), group: v('group'), telegram: v('tg'), bio: v('bio') };
+  if (!f.first.trim()) return msg.textContent = t('errFirst');
+  if (!f.last.trim()) return msg.textContent = t('errLast');
+  if (!f.group.trim()) return msg.textContent = t('errGroup');
+  try { await API.saveProfile(USER.uid, USER.phone, f); PROFILE = await API.getProfile(USER.uid); render(); const m = $('#profMsg'); if (m) { m.textContent = t('profSaved'); m.className = 'msg ok'; } }
+  catch (e) { console.warn(e); msg.textContent = t('errNet'); }
+}
+async function submitPassword() {
+  const msg = $('#pwMsg'), cur = $('#pw-cur').value, nx = $('#pw-new').value;
+  if (nx.length < 6) { msg.className = 'msg err'; return msg.textContent = t('errPass'); }
+  const r = await API.changePassword(cur, nx);
+  msg.className = r.ok ? 'msg ok' : 'msg err';
+  msg.textContent = r.ok ? t('pwOk') : t({ wrong: 'errCur', weak: 'errPass', many: 'errMany' }[r.error] || 'errNet');
+  if (r.ok) { $('#pw-cur').value = ''; $('#pw-new').value = ''; }
+}
 
 /* ---------- admin ---------- */
 function openLogin() {
@@ -1958,6 +2186,9 @@ document.addEventListener('click', async ev => {
   else if (act === 'login') openLogin();
   else if (act === 'admin') location.hash = '#admin';
   else if (act === 'logout') { await API.adminLogout(); location.hash = '#home'; }
+  else if (act === 'signout') { await API.signOut(); PROFILE = null; AUTH_TAB = 'in'; render(); }
+  else if (act === 'authtab') { AUTH_TAB = id; render(); }
+  else if (act === 'theme') { LS.set('theme', id); applyTheme(id); render(); }
   else if (act === 'scan') openScanner();
   else if (act === 'scannext') { $('#scanOut').innerHTML = ''; if (SCAN) SCAN.busy = false; }
   else if (act === 'regs') showRegs(id);
@@ -1973,6 +2204,10 @@ document.addEventListener('submit', ev => {
   else if (f.id === 'evF') submitEvent(f);
   else if (f.id === 'findF') findTickets($('#findPhone').value);
   else if (f.id === 'ptsF') showPoints($('#ptsPhone').value);
+  else if (f.id === 'inF') submitSignIn();
+  else if (f.id === 'upF') submitSignUp();
+  else if (f.id === 'profF') submitProfile();
+  else if (f.id === 'pwF') submitPassword();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#modal')) closeModal(); });
 window.addEventListener('hashchange', route);
@@ -1985,9 +2220,19 @@ function softRender() { // re-render on data change, but never while the user is
 }
 API.watchEvents(list => { EVENTS = list; softRender(); }, e => console.warn(e));
 API.watchTop(10, list => { TOP = list; const b = $('#board'); if (b) b.innerHTML = leaderboard(TOP); }, e => console.warn(e));
-API.onAuth(a => { IS_ADMIN = a; if (!a && ROUTE === 'admin') render(); else softRender(); });
+API.onAuth(async st => {
+  IS_ADMIN = !!st.admin; const was = USER && USER.uid; USER = st.user; if (!USER) PROFILE = null;
+  if (USER && USER.uid !== was) {
+    LS.set('phone', USER.phone);
+    try { PROFILE = await API.getProfile(USER.uid); } catch (e) { console.warn(e); }
+    syncTickets(USER.phone);
+  }
+  if (!IS_ADMIN && ROUTE === 'admin') render(); else softRender();
+});
 route();
 
+window.API = API;
+});
 </script>
 </body>
 </html>
