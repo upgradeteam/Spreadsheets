@@ -201,6 +201,45 @@ input:focus,textarea:focus{border-color:var(--blue);outline:none;box-shadow:0 0 
 .setrow > div:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
 .setrow small{color:var(--muted);font-size:13px}
 .msg.ok{color:var(--ok)}
+/* startup program */
+.help.st{background:linear-gradient(120deg,var(--card) 55%,color-mix(in srgb,var(--orange) 12%,var(--card)))}
+.help.st::before{content:"MVP"}
+.st-hero{min-height:0}
+.st-hero::before{background:radial-gradient(circle at 85% 20%,rgba(240,77,36,.75),transparent 45%),radial-gradient(circle at 10% 90%,rgba(91,123,255,.6),transparent 50%),var(--navy);filter:none;opacity:1}
+.st-hero::after{background:none}
+.st-hero .hero-in{padding-top:34px}
+.tag.big{font-size:15px;padding:12px 16px;line-height:1.4;white-space:normal}
+.fh{font-size:17px;font-weight:800;margin-top:8px;padding-top:12px;border-top:1px solid var(--line)}
+.fh:first-of-type{border-top:0;padding-top:0}
+fieldset.radios{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+fieldset.radios legend{font-weight:600;font-size:14px;margin-bottom:8px;padding:0}
+.pill{position:relative;display:inline-flex}
+.pill input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer;min-height:0}
+.pill span{display:inline-flex;align-items:center;min-height:42px;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--ground);font-weight:600;font-size:14px}
+.pill input:checked + span{background:var(--navy);border-color:var(--navy);color:#fff}
+.pill input:focus-visible + span{outline:3px solid var(--orange);outline-offset:2px}
+.dot{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--orange);color:#fff;font-size:11px;margin-left:4px}
+.score{flex:none;width:76px;border-radius:14px;padding:8px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.score b{font:900 26px/1 var(--f-display);font-stretch:118%}
+.score span{font-size:11px;font-weight:700}
+.s-strong{background:var(--okbg);color:var(--ok)}.s-mid{background:#FFF1D6;color:#7A5300}.s-raw{background:var(--soft);color:var(--muted)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .s-mid{background:#3A2E12;color:#F5D58A}}
+:root[data-theme="dark"] .s-mid{background:#3A2E12;color:#F5D58A}
+.chips{gap:6px}
+.tag.st-good{background:var(--okbg);color:var(--ok)}.tag.st-no{background:var(--badbg);color:var(--bad)}.tag.st-new{background:var(--orange);color:#fff}
+.st-card.st-no{opacity:.65}
+.st-card details summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
+.bars{display:flex;flex-direction:column;gap:6px;margin:6px 0 12px}
+.sbar{display:grid;grid-template-columns:minmax(0,1fr) 120px 44px;align-items:center;gap:10px;font-size:13px}
+.sbar i{height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.sbar u{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--orange));text-decoration:none}
+.sbar em{font:600 12px var(--f-mono);font-style:normal;color:var(--muted);text-align:right}
+.qa{margin:10px 0}.qa b{font-size:13px;color:var(--muted)}.qa p{margin:4px 0 0;white-space:pre-line}
+@media (max-width:480px){.sbar{grid-template-columns:minmax(0,1fr) 80px 40px}}
+.myapp{flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.tag.ms-good{background:var(--okbg);color:var(--ok)}.tag.ms-no{background:var(--soft);color:var(--muted)}.tag.ms-new,.tag.ms-maybe{background:#FFF1D6;color:#7A5300}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.ms-new,:root:not([data-theme="light"]) .tag.ms-maybe{background:#3A2E12;color:#F5D58A}}
+:root[data-theme="dark"] .tag.ms-new,:root[data-theme="dark"] .tag.ms-maybe{background:#3A2E12;color:#F5D58A}
 /* phone */
 @media (max-width:760px){
   .nav{display:none}.lang{margin-left:auto}
@@ -1609,6 +1648,13 @@ function firebaseBackend() {
       return db.collection('events').add(Object.assign({}, ev, { taken: 0, createdAt: Date.now() }));
     },
     deleteEvent(id) { return db.doc('events/' + id).delete(); },
+    async submitStartup(a) { await db.collection('startups').add(Object.assign({}, a, { owner: a.phone + ACC_DOMAIN, status: 'new', createdAt: Date.now() })); return { ok: true }; },
+    watchStartups(cb, err) { return db.collection('startups').orderBy('createdAt', 'desc').onSnapshot(s => cb(s.docs.map(withId)), err); },
+    watchMyStartups(phone, cb, err) { return db.collection('startups').where('owner', '==', normPhone(phone) + ACC_DOMAIN).onSnapshot(s => cb(s.docs.map(withId).sort((a, b) => b.createdAt - a.createdAt)), err); },
+    watchStartupNotes(cb, err) { return db.collection('startupNotes').onSnapshot(s => { const m = {}; s.docs.forEach(d => { m[d.id] = d.data().note || ''; }); cb(m); }, err); },
+    updateStartup(id, ch) { return db.doc('startups/' + id).update(ch); },
+    saveStartupNote(id, note) { return db.doc('startupNotes/' + id).set({ note }); },
+    async deleteStartup(id) { await db.doc('startups/' + id).delete(); try { await db.doc('startupNotes/' + id).delete(); } catch (e) {} },
     async listRegs(eventId) { const s = await db.collection('registrations').where('eventId', '==', eventId).get(); return s.docs.map(withId); },
     async checkIn(regId) {
       const regRef = db.doc('registrations/' + regId);
@@ -1703,6 +1749,13 @@ function demoBackend() {
       save(); return later();
     },
     async deleteEvent(id) { delete S.events[id]; save(); return later(); },
+    async submitStartup(a) { S.startups = S.startups || {}; S.startups['s' + Date.now().toString(36)] = Object.assign({}, a, { owner: a.phone + ACC_DOMAIN, status: 'new', createdAt: Date.now() }); save(); return later({ ok: true }); },
+    watchMyStartups(phone, cb) { const own = normPhone(phone) + ACC_DOMAIN; const f = () => cb(Object.entries(S.startups || {}).filter(([, x]) => x.owner === own).map(([id, x]) => Object.assign({ id }, x)).sort((a, b) => b.createdAt - a.createdAt)); subs.ev.push(f); setTimeout(f); return () => { subs.ev = subs.ev.filter(g => g !== f); }; },
+    watchStartupNotes(cb) { const f = () => cb(Object.assign({}, S.stNotes || {})); subs.ev.push(f); setTimeout(f); return () => { subs.ev = subs.ev.filter(g => g !== f); }; },
+    async saveStartupNote(id, note) { S.stNotes = S.stNotes || {}; S.stNotes[id] = note; save(); return later(); },
+    watchStartups(cb) { const f = () => cb(Object.entries(S.startups || {}).map(([id, x]) => Object.assign({ id }, x)).sort((a, b) => b.createdAt - a.createdAt)); subs.ev.push(f); setTimeout(f); return () => { subs.ev = subs.ev.filter(g => g !== f); }; },
+    async updateStartup(id, ch) { Object.assign(S.startups[id], ch); save(); return later(); },
+    async deleteStartup(id) { delete S.startups[id]; if (S.stNotes) delete S.stNotes[id]; save(); return later(); },
     async listRegs(eventId) { return later(Object.entries(S.regs).filter(([, r]) => r.eventId === eventId).map(([id, r]) => Object.assign({ id }, r))); },
     async checkIn(regId) {
       const r = S.regs[regId]; if (!r) return later({ status: 'notfound' });
@@ -1794,12 +1847,43 @@ const T = {
   light: ['Kunduzgi', 'Light'], dark: ['Tungi', 'Dark'], auto: ['Avto', 'Auto'], language: ['Til', 'Language'], languageP: ['Sayt tili', 'Site language'],
   pwH: ['Parolni o‘zgartirish', 'Change password'], pwCur: ['Hozirgi parol', 'Current password'], pwNew: ['Yangi parol', 'New password'], pwOk: ['Parol o‘zgartirildi.', 'Password changed.'],
   signOut: ['Akkauntdan chiqish', 'Sign out'], adminPanel: ['Admin paneli', 'Admin panel'], profSaved: ['Ma’lumotlar saqlandi.', 'Details saved.'],
+  stK: ['Bepul dastur', 'Free program'], stH: ['Startup: g‘oyadan MVP gacha', 'Startup: from idea to MVP'],
+  stP: ['G‘oyangiz bormi? UPgrade jamoasi uni birinchi ishlaydigan versiyagacha (MVP) olib borishga bepul yordam beradi. Anketani to‘ldiring, biz siz bilan bog‘lanamiz.', 'Got an idea? The UPgrade team helps you take it to a first working version (MVP) for free. Fill in the form and we will contact you.'],
+  stApply: ['Ariza topshirish', 'Apply'], stFormH: ['Startup anketasi', 'Startup application'],
+  stPrivate: ['Arizangizni faqat UPgrade adminlari ko‘radi.', 'Only UPgrade admins see your application.'],
+  stSteps: ['Ariza → suhbat → reja → MVP', 'Application → interview → plan → MVP'],
+  aYou: ['Siz haqingizda', 'About you'], aIdea: ['G‘oya', 'The idea'], aReady: ['Tayyorgarlik', 'Readiness'],
+  fFull: ['Ism va familiya', 'Full name'], fStTitle: ['Startup nomi (bo‘lmasa, qisqa tavsif)', 'Startup name (or a short description)'],
+  fProblem: ['Qanday muammoni hal qiladi?', 'What problem does it solve?'], fProblemPh: ['Muammoni aniq yozing: nima noqulay, qachon va qanchalik tez-tez uchraydi.', 'Describe the problem: what is inconvenient, when and how often it happens.'],
+  fAudience: ['Bu muammo kimda bor? (mijozlaringiz)', 'Who has this problem? (your customers)'], fAudiencePh: ['Masalan: Toshkentdagi talabalar, kichik do‘konlar egalari…', 'For example: students in Tashkent, small shop owners…'],
+  fSolution: ['Sizning yechimingiz', 'Your solution'], fSolutionPh: ['Mahsulotingiz nima qiladi va boshqalardan nimasi bilan farq qiladi?', 'What does your product do and how is it different?'],
+  fStage: ['Hozirgi bosqich', 'Current stage'], stage_idea: ['Faqat g‘oya', 'Just an idea'], stage_proto: ['Prototip yoki demo bor', 'Prototype or demo'], stage_users: ['Foydalanuvchilar bor', 'Has users'],
+  fTalked: ['Nechta potensial mijoz bilan gaplashgansiz?', 'How many potential customers have you talked to?'],
+  fTeam: ['Jamoa', 'Team'], team_1: ['Yolg‘iz', 'Solo'], team_2: ['2–3 kishi', '2–3 people'], team_4: ['4+ kishi', '4+ people'],
+  fHours: ['Haftasiga necha soat ajrata olasiz?', 'Hours per week you can give'],
+  fNeed: ['Bizdan qanday yordam kerak? (ixtiyoriy)', 'What help do you need? (optional)'],
+  errStTitle: ['Startup nomini yozing.', 'Enter the startup name.'], errLong: ['Bu maydonni biroz batafsilroq yozing (kamida 20 belgi).', 'Please write a bit more here (at least 20 characters).'], errPick: ['Barcha savollarga javob tanlang.', 'Pick an answer for every question.'],
+  stSent: ['Arizangiz qabul qilindi! UPgrade jamoasi tez orada siz bilan bog‘lanadi.', 'Application received! The UPgrade team will contact you soon.'],
+  stAdminH: ['Startup arizalari', 'Startup applications'], stNone: ['Hali ariza kelmagan.', 'No applications yet.'],
+  stScore: ['Avto-baho', 'Auto score'], stScoreNote: ['Avto-baho anketaning qanchalik to‘liq va aniq to‘ldirilgani hamda startupning bosqichiga qarab hisoblanadi. Bu yordamchi ko‘rsatkich, yakuniy qarorni admin beradi.', 'The auto score reflects how complete and specific the application is and how far the startup has got. It is a helper; the admin makes the final call.'],
+  lvl_strong: ['Kuchli', 'Strong'], lvl_mid: ['O‘rtacha', 'Promising'], lvl_raw: ['Xom g‘oya', 'Early idea'],
+  st_new: ['Yangi', 'New'], st_good: ['Yaxshi', 'Good'], st_maybe: ['O‘ylab ko‘ramiz', 'Maybe'], st_no: ['Rad etildi', 'Declined'], stAll: ['Hammasi', 'All'],
+  adminNote: ['Admin izohi (faqat adminlar ko‘radi)', 'Admin note (admins only)'], details: ['Batafsil', 'Details'],
+  cr_problem: ['Muammo aniq yozilgan', 'Problem is clear'], cr_audience: ['Mijoz aniqlangan', 'Customer is defined'], cr_solution: ['Yechim tushuntirilgan', 'Solution is explained'],
+  cr_talked: ['Mijozlar bilan gaplashgan', 'Talked to customers'], cr_stage: ['Bosqich', 'Stage'], cr_team: ['Jamoa', 'Team'], cr_hours: ['Vaqt ajrata oladi', 'Time commitment'],
+  myApps: ['Arizalarim', 'My applications'], myAppsNone: ['Hali startup arizasi topshirmagansiz.', 'You have not applied with a startup yet.'],
+  myAppsNote: ['Shu telefon raqami bilan topshirilgan barcha arizalar. Admin izohlari bu yerda ko‘rinmaydi.', 'All applications sent with this phone number. Admin notes are not shown here.'],
+  ms_new: ['Ko‘rib chiqilmoqda', 'Under review'], ms_maybe: ['Ko‘rib chiqilmoqda', 'Under review'], ms_good: ['Qabul qilindi — siz bilan bog‘lanamiz', 'Accepted — we will contact you'], ms_no: ['Bu safar tanlanmadi', 'Not selected this time'],
+  sentOn: ['Topshirilgan', 'Sent'], newApp: ['Yangi ariza', 'New application'],
   noProfile: ['Profil ma’lumotlari topilmadi. Quyidagi formani to‘ldirib saqlang.', 'No profile details found. Fill in the form below and save.']
 };
 const t = k => (T[k] ? T[k][LANG === 'en' ? 1 : 0] : k);
 const MONTHS = { uz: ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek'], en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] };
 
 /* ---------- state ---------- */
+const OPEN_ST = new Set();
+let MY_ST = [], myStUnsub = null, ST_NOTES = {}, notesUnsub = null;
+let STARTUPS = [], ADMIN_TAB = 'events', ST_FILTER = 'all', stUnsub = null;
 let EVENTS = [], TOP = [], IS_ADMIN = false, ROUTE = 'home', ADMIN_OPEN = null, USER = null, PROFILE = null, AUTH_TAB = 'in';
 const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const upcoming = () => EVENTS.filter(e => e.date >= todayISO()).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
@@ -1853,6 +1937,10 @@ function pageHome() {
     <div class="help-tx"><div class="kick o">${t('helpK')}</div><h2>${t('helpH')}</h2><p>${t('helpP')}</p></div>
     <a class="btn dark big" href="workbook.html">${t('openBook')} →</a>
   </section>
+  <section class="help st">
+    <div class="help-tx"><div class="kick o">${t('stK')}</div><h2>${t('stH')}</h2><p>${t('stP')}</p></div>
+    <a class="btn primary big" href="#startup">${t('stApply')} →</a>
+  </section>
   <section><div class="sec-h"><h2>${t('upcoming')}</h2><a href="#events">${t('all')} →</a></div>
     <div class="grid">${up.length ? up.map(e => eventCard(e, { compact: true })).join('') : `<p class="empty">${t('noEvents')}</p>`}</div></section>
   <section class="how"><h2>${t('howH')}</h2><ol>
@@ -1892,7 +1980,11 @@ function pageTop() {
 function pageAdmin() {
   if (!IS_ADMIN) return `<section class="card narrow"><h1 class="pg">${t('admin')}</h1><p>${t('adminOnly')}</p><button class="btn primary" data-act="login">${t('iamAdmin')}</button></section>`;
   const list = upcoming().concat(pastEv());
-  return `<section><div class="sec-h"><h1 class="pg">${t('admin')}</h1><div class="row"><button class="btn primary" data-act="scan">▣ ${t('scan')}</button><button class="btn ghost" data-act="logout">${t('logout')}</button></div></div></section>
+  const newN = STARTUPS.filter(x => x.status === 'new').length;
+  const head = `<section><div class="sec-h"><h1 class="pg">${t('admin')}</h1><div class="row"><button class="btn primary" data-act="scan">▣ ${t('scan')}</button><button class="btn ghost" data-act="logout">${t('logout')}</button></div></div>
+    <div class="seg" role="tablist"><button role="tab" data-act="atab" data-id="events" class="${ADMIN_TAB === 'events' ? 'on' : ''}">${t('events')}</button><button role="tab" data-act="atab" data-id="startups" class="${ADMIN_TAB === 'startups' ? 'on' : ''}">${t('stAdminH')} (${STARTUPS.length})${newN ? ` <span class="dot">${newN}</span>` : ''}</button></div></section>`;
+  if (ADMIN_TAB === 'startups') return head + adminStartups();
+  return head + `
   <section class="card"><h2 id="evFormH">${t('newEvent')}</h2>${eventForm()}</section>
   <section><h2>${t('events')}</h2><div class="alist">${list.map(e => `<div class="arow" data-id="${esc(e.id)}">
       <div class="arow-h"><div><b>${esc(e.title)}</b><small>${esc(e.date)} ${esc(e.time || '')} · ${esc(e.place || '')}</small></div>
@@ -1919,7 +2011,7 @@ function render() {
     <nav class="nav">${nav.map(([r, k]) => `<a href="#${r}" class="${ROUTE === r ? 'on' : ''}">${t(k)}</a>`).join('')}</nav>
     <div class="lang"><button class="${LANG === 'uz' ? 'on' : ''}" data-lang="uz">UZ</button><button class="${LANG === 'en' ? 'on' : ''}" data-lang="en">EN</button></div>`;
   $('#tabbar').innerHTML = nav.filter(([r]) => r !== 'admin').map(([r, k]) => `<a href="#${r}" class="${ROUTE === r ? 'on' : ''}">${ICONS[r]}<span>${t(k)}</span></a>`).join('');
-  const pages = { home: pageHome, events: pageEvents, tickets: pageTickets, top: pageTop, admin: pageAdmin, profile: pageProfile };
+  const pages = { home: pageHome, events: pageEvents, tickets: pageTickets, top: pageTop, admin: pageAdmin, profile: pageProfile, startup: pageStartup };
   $('#main').innerHTML = (API.mode === 'demo' ? `<div class="demo">${t('demoNote')}${demoWhy()}</div>` : '') + (pages[ROUTE] || pageHome)();
   $('#ftr').innerHTML = `<div>${wordmark()} <span>${t('footer')}</span></div><button class="linkbtn" data-act="${IS_ADMIN ? 'admin' : 'login'}">⚙ ${IS_ADMIN ? t('admin') : t('iamAdmin')}</button>`;
   if (ROUTE === 'top') autoPoints();
@@ -1944,7 +2036,7 @@ const ICONS = {
   top: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg>',
   admin: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>'
 };
-function route() { if ($('#modal')) closeModal(); const h = (location.hash || '#home').slice(1); ROUTE = ['home', 'events', 'tickets', 'top', 'admin', 'profile'].includes(h) ? h : 'home'; render(); window.scrollTo(0, 0); }
+function route() { if ($('#modal')) closeModal(); const h = (location.hash || '#home').slice(1); ROUTE = ['home', 'events', 'tickets', 'top', 'admin', 'profile', 'startup'].includes(h) ? h : 'home'; render(); window.scrollTo(0, 0); }
 
 /* ---------- modal ---------- */
 function modal(html, onClose) {
@@ -2055,6 +2147,7 @@ function pageProfile() {
       <div class="pinfo"><h1>${esc(name)}</h1><span>${esc([P.group, P.telegram, fmtPhone(USER.phone)].filter(Boolean).join(' · '))}</span>${P.bio ? `<p>${esc(P.bio)}</p>` : ''}</div></section>
     <div class="pstats"><div><b>${esc(P.points || 0)}</b><span>${t('pts')}</span></div><div><b>${esc(P.visits || 0)}</b><span>${t('visits')}</span></div><div><b>${rank >= 0 ? rank + 1 : '—'}</b><span>${t('rank')} · TOP 10</span></div></div>
     ${myT ? `<a class="btn ghost" href="#tickets">${t('tickets')} (${myT}) →</a>` : ''}
+    ${myAppsCard()}
     <section class="card"><h2>${t('myInfo')}</h2>${PROFILE ? '' : `<p>${t('noProfile')}</p>`}
       <form id="profF" class="form"><div class="two"><label>${t('fFirst')}<input id="pf-first" required maxlength="40" value="${esc(P.first)}" autocomplete="given-name"></label><label>${t('fLast')}<input id="pf-last" required maxlength="40" value="${esc(P.last)}" autocomplete="family-name"></label></div>
         <div class="two"><label>${t('fGroup')}<input id="pf-group" required maxlength="20" value="${esc(P.group)}"></label><label>${t('fTg')}<input id="pf-tg" maxlength="40" placeholder="@username" value="${esc(P.telegram)}"></label></div>
@@ -2098,6 +2191,108 @@ async function submitPassword() {
   msg.className = r.ok ? 'msg ok' : 'msg err';
   msg.textContent = r.ok ? t('pwOk') : t({ wrong: 'errCur', weak: 'errPass', many: 'errMany' }[r.error] || 'errNet');
   if (r.ok) { $('#pw-cur').value = ''; $('#pw-new').value = ''; }
+}
+
+/* ---------- startup program ---------- */
+function myAppsCard() {
+  const when = ms => { const d = new Date(ms || 0); return `${d.getDate()} ${(MONTHS[LANG] || MONTHS.uz)[d.getMonth()]} ${d.getFullYear()}`; };
+  return `<section class="card"><div class="sec-h"><h2>${t('myApps')}</h2><a class="btn small ghost" href="#startup">+ ${t('newApp')}</a></div>
+    ${MY_ST.length ? `<p class="note">${t('myAppsNote')}</p><div class="alist">${MY_ST.map(a => `<div class="arow myapp"><div class="arow-h"><div><b>${esc(a.title)}</b><small>${t('sentOn')}: ${when(a.createdAt)} · ${esc(t('stage_' + a.stage))}</small></div></div>
+      <span class="tag ms-${esc(a.status || 'new')}">${t('ms_' + (a.status || 'new'))}</span></div>`).join('')}</div>`
+      : `<p>${t('myAppsNone')}</p><div class="row"><a class="btn primary" href="#startup">${t('stApply')} →</a></div>`}
+  </section>`;
+}
+function watchMyApps() {
+  if (myStUnsub) { myStUnsub(); myStUnsub = null; } MY_ST = [];
+  if (USER) myStUnsub = API.watchMyStartups(USER.phone, list => { MY_ST = list; if (ROUTE === 'profile') softRender(); }, e => console.warn(e));
+}
+const ST_OPTS = { stage: ['idea', 'proto', 'users'], talked: ['0', '1-5', '6-20', '20+'], team: ['1', '2', '4'], hours: ['<3', '3-10', '10+'] };
+const ST_LBL = { stage: k => t('stage_' + k), talked: k => k, team: k => t('team_' + k), hours: k => k + (LANG === 'en' ? ' h' : ' soat') };
+function radios(name, label) {
+  return `<fieldset class="radios"><legend>${label}</legend><div class="row">${ST_OPTS[name].map(k => `<label class="pill"><input type="radio" name="st-${name}" value="${esc(k)}"><span>${esc(ST_LBL[name](k))}</span></label>`).join('')}</div></fieldset>`;
+}
+function pageStartup() {
+  const P = PROFILE, me = LS.get('me', {});
+  const sent = LS.get('stSent', 0);
+  return `<section class="hero st-hero"><div class="hero-in"><div class="kick">${t('stK')} · UPgrade</div><h1>${t('stH')}</h1><p>${t('stP')}</p><div class="kick">${t('stSteps')}</div></div></section>
+  ${sent ? `<p class="tag ok big">✓ ${t('stSent')}</p>` : ''}
+  <section class="card"><h2>${t('stFormH')}</h2><p>${t('stPrivate')}</p>
+  <form id="stF" class="form">
+    <h3 class="fh">${t('aYou')}</h3>
+    <div class="two"><label>${t('fFull')}<input id="st-name" required maxlength="60" autocomplete="name" value="${esc(P ? fullName(P) : (me.name || ''))}"></label><label>${t('fGroup')}<input id="st-group" required maxlength="20" placeholder="FAF01" value="${esc(P ? P.group : (me.group || ''))}"></label></div>
+    <div class="two">${phoneField('st-phone')}<label>${t('fTg')}<input id="st-tg" maxlength="40" placeholder="@username" value="${esc(P ? P.telegram : '')}"></label></div>
+    <h3 class="fh">${t('aIdea')}</h3>
+    <label>${t('fStTitle')}<input id="st-title" required maxlength="80"></label>
+    <label>${t('fProblem')}<textarea id="st-problem" rows="3" maxlength="800" placeholder="${t('fProblemPh')}"></textarea></label>
+    <label>${t('fAudience')}<textarea id="st-audience" rows="2" maxlength="600" placeholder="${t('fAudiencePh')}"></textarea></label>
+    <label>${t('fSolution')}<textarea id="st-solution" rows="3" maxlength="800" placeholder="${t('fSolutionPh')}"></textarea></label>
+    <h3 class="fh">${t('aReady')}</h3>
+    ${radios('stage', t('fStage'))}${radios('talked', t('fTalked'))}${radios('team', t('fTeam'))}${radios('hours', t('fHours'))}
+    <label>${t('fNeed')}<textarea id="st-need" rows="2" maxlength="500"></textarea></label>
+    <p id="stMsg" class="msg err" role="alert"></p>
+    <div class="row"><button class="btn primary big">${t('stApply')}</button></div>
+  </form></section>`;
+}
+async function submitStartup() {
+  const msg = $('#stMsg'), v = id => $('#st-' + id).value.trim(), pick = n => { const r = document.querySelector(`input[name="st-${n}"]:checked`); return r ? r.value : ''; };
+  const a = { name: v('name').replace(/\s+/g, ' '), group: v('group').toUpperCase(), phone: normPhone(v('phone')), telegram: v('tg'), title: v('title'), problem: v('problem'), audience: v('audience'), solution: v('solution'),
+    stage: pick('stage'), talked: pick('talked'), team: pick('team'), hours: pick('hours'), need: v('need') };
+  if (a.name.length < 2) return msg.textContent = t('errName');
+  if (!a.group) return msg.textContent = t('errGroup');
+  if (!a.phone) return msg.textContent = t('errPhone');
+  if (!a.title) return msg.textContent = t('errStTitle');
+  for (const k of ['problem', 'audience', 'solution']) if (a[k].length < 20) { $('#st-' + k).focus(); return msg.textContent = t('errLong'); }
+  if (!a.stage || !a.talked || !a.team || !a.hours) return msg.textContent = t('errPick');
+  const b = $('#stF .btn.primary'); b.disabled = true; msg.textContent = '';
+  try { await API.submitStartup(a); LS.set('phone', a.phone); LS.set('stSent', Date.now()); render(); window.scrollTo(0, 0); }
+  catch (e) { console.warn(e); msg.textContent = t('errNet'); b.disabled = false; }
+}
+// Transparent checklist score (0-100) shown only to admins
+function startupScore(a) {
+  const len = (s, steps) => { const n = String(s || '').length; for (const [min, pts] of steps) if (n >= min) return pts; return 0; };
+  const parts = [
+    ['cr_problem', len(a.problem, [[150, 20], [80, 14], [30, 8], [1, 3]]), 20],
+    ['cr_audience', len(a.audience, [[120, 15], [60, 10], [20, 6], [1, 2]]), 15],
+    ['cr_solution', len(a.solution, [[120, 15], [60, 10], [20, 6], [1, 2]]), 15],
+    ['cr_talked', { '0': 0, '1-5': 8, '6-20': 15, '20+': 20 }[a.talked] || 0, 20],
+    ['cr_stage', { idea: 5, proto: 10, users: 15 }[a.stage] || 0, 15],
+    ['cr_team', { '1': 4, '2': 8, '4': 7 }[a.team] || 0, 8],
+    ['cr_hours', { '<3': 0, '3-10': 4, '10+': 7 }[a.hours] || 0, 7]
+  ];
+  const total = parts.reduce((s, p) => s + p[1], 0);
+  return { total, parts, lvl: total >= 75 ? 'strong' : total >= 50 ? 'mid' : 'raw' };
+}
+function adminStartups() {
+  const list = STARTUPS.filter(x => ST_FILTER === 'all' || x.status === ST_FILTER);
+  const f = ['all', 'new', 'good', 'maybe', 'no'];
+  return `<section><div class="seg">${f.map(k => `<button data-act="stfilter" data-id="${k}" class="${ST_FILTER === k ? 'on' : ''}">${k === 'all' ? t('stAll') : t('st_' + k)} (${k === 'all' ? STARTUPS.length : STARTUPS.filter(x => x.status === k).length})</button>`).join('')}</div>
+    <p class="note">${t('stScoreNote')}</p>
+    <div class="alist">${list.length ? list.map(stCard).join('') : `<p class="empty">${t('stNone')}</p>`}</div></section>`;
+}
+function stCard(a) {
+  const sc = startupScore(a), d = new Date(a.createdAt || 0);
+  const when = `${d.getDate()} ${(MONTHS[LANG] || MONTHS.uz)[d.getMonth()]}, ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  const q = (k, v) => v ? `<div class="qa"><b>${t(k)}</b><p>${esc(v)}</p></div>` : '';
+  return `<article class="arow st-card st-${esc(a.status)}" data-id="${esc(a.id)}">
+    <div class="arow-h"><div><b>${esc(a.title)}</b><small>${esc(a.name)} · ${esc(a.group)} · ${when}</small></div>
+      <div class="score s-${sc.lvl}" title="${t('stScore')}"><b>${sc.total}</b><span>${t('lvl_' + sc.lvl)}</span></div></div>
+    <div class="row chips"><span class="tag">${esc(t('stage_' + a.stage))}</span><span class="tag">${t('cr_talked')}: ${esc(a.talked)}</span><span class="tag">${esc(t('team_' + a.team))}</span><span class="tag">${esc(a.hours)} ${LANG === 'en' ? 'h/wk' : 'soat/hafta'}</span><span class="tag st-${esc(a.status)}">${t('st_' + (a.status || 'new'))}</span></div>
+    <details data-st="${esc(a.id)}"${OPEN_ST.has(a.id) ? ' open' : ''}><summary>${t('details')}</summary>
+      <div class="bars">${sc.parts.map(([k, v, max]) => `<div class="sbar"><span>${t(k)}</span><i><u style="width:${Math.round(v / max * 100)}%"></u></i><em>${v}/${max}</em></div>`).join('')}</div>
+      ${q('fProblem', a.problem)}${q('fAudience', a.audience)}${q('fSolution', a.solution)}${q('fNeed', a.need)}
+      <div class="qa"><b>${t('fPhone')}</b><p class="mono">${esc(fmtPhone(a.phone))}${a.telegram ? ' · ' + esc(a.telegram) : ''}</p></div>
+      <label class="form">${t('adminNote')}<textarea data-note="${esc(a.id)}" rows="2" maxlength="500">${esc(ST_NOTES[a.id] || '')}</textarea></label>
+    </details>
+    <div class="row">${['good', 'maybe', 'no'].map(k => `<button class="btn small ${a.status === k ? 'primary' : 'ghost'}" data-act="ststatus" data-id="${esc(a.id)}" data-v="${k}">${t('st_' + k)}</button>`).join('')}
+      <button class="btn small ghost" data-act="stnote" data-id="${esc(a.id)}">${t('save')}</button><button class="btn small danger" data-act="stdel" data-id="${esc(a.id)}">${t('del')}</button></div>
+  </article>`;
+}
+function watchStartupsIfAdmin() {
+  if (IS_ADMIN && !stUnsub) {
+    stUnsub = API.watchStartups(list => { STARTUPS = list; if (ROUTE === 'admin') softRender(); }, e => console.warn(e));
+    notesUnsub = API.watchStartupNotes(m => { ST_NOTES = m; }, e => console.warn(e));
+  }
+  if (!IS_ADMIN && stUnsub) { stUnsub(); stUnsub = null; STARTUPS = []; if (notesUnsub) { notesUnsub(); notesUnsub = null; } ST_NOTES = {}; }
 }
 
 /* ---------- admin ---------- */
@@ -2189,6 +2384,11 @@ document.addEventListener('click', async ev => {
   else if (act === 'signout') { await API.signOut(); PROFILE = null; AUTH_TAB = 'in'; render(); }
   else if (act === 'authtab') { AUTH_TAB = id; render(); }
   else if (act === 'theme') { LS.set('theme', id); applyTheme(id); render(); }
+  else if (act === 'atab') { ADMIN_TAB = id; render(); }
+  else if (act === 'stfilter') { ST_FILTER = id; render(); }
+  else if (act === 'ststatus') { await API.updateStartup(id, { status: a.dataset.v }); }
+  else if (act === 'stnote') { const ta = document.querySelector(`textarea[data-note="${CSS.escape(id)}"]`); if (ta) { await API.saveStartupNote(id, ta.value.slice(0, 500)); a.textContent = '✓ ' + t('saved'); } }
+  else if (act === 'stdel') { if (a.dataset.sure) await API.deleteStartup(id); else { a.dataset.sure = '1'; a.textContent = t('delSure'); setTimeout(() => { if (a.isConnected) { delete a.dataset.sure; a.textContent = t('del'); } }, 4000); } }
   else if (act === 'scan') openScanner();
   else if (act === 'scannext') { $('#scanOut').innerHTML = ''; if (SCAN) SCAN.busy = false; }
   else if (act === 'regs') showRegs(id);
@@ -2208,7 +2408,9 @@ document.addEventListener('submit', ev => {
   else if (f.id === 'upF') submitSignUp();
   else if (f.id === 'profF') submitProfile();
   else if (f.id === 'pwF') submitPassword();
+  else if (f.id === 'stF') submitStartup();
 });
+document.addEventListener('toggle', e => { const d = e.target; if (d.dataset && d.dataset.st) { d.open ? OPEN_ST.add(d.dataset.st) : OPEN_ST.delete(d.dataset.st); } }, true);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#modal')) closeModal(); });
 window.addEventListener('hashchange', route);
 
@@ -2227,6 +2429,8 @@ API.onAuth(async st => {
     try { PROFILE = await API.getProfile(USER.uid); } catch (e) { console.warn(e); }
     syncTickets(USER.phone);
   }
+  if ((USER && USER.uid) !== was) watchMyApps();
+  watchStartupsIfAdmin();
   if (!IS_ADMIN && ROUTE === 'admin') render(); else softRender();
 });
 route();
